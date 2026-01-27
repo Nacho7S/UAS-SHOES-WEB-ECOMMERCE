@@ -6,9 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:admin": "node app/seeds/seedAdmin.js",
+    "seed:shoe": "node app/seeds/seedShoe.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "jose": "^6.1.3",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.1.5",
     "next": "16.1.4",
     "react": "19.2.3",
     "react-dom": "19.2.3"
