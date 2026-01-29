@@ -29,6 +29,10 @@ const shoeSchema = new mongoose.Schema({
     default: 0,
     min: [0, 'Stock cannot be negative']
   },
+  category: {
+    type: String,
+    required: true
+  },
   size: [{
     type: Number
   }],

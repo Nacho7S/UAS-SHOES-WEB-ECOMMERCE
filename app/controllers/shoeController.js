@@ -7,13 +7,19 @@ class shoeController {
     try {
       await connectDB();
 
-      const { name, releaseYear, description, price, stock, brand, size, color, images } = req.body;
+      const { name, releaseYear, description, price, category,stock, brand, size, color, images } = req.body;
 
-      // Validation
+  
       if (!name || !price) {
         return res.status(400).json({
           success: false,
           message: 'Name and price are required'
+        });
+      }
+      if (!category) {
+        return res.status(400).json({
+          success: false,
+          message: 'Category are required'
         });
       }
 
@@ -31,7 +37,7 @@ class shoeController {
         });
       }
 
-      // Check for duplicate shoe name
+    
       const existingShoe = await Shoes.findOne({ 
         name: { $regex: new RegExp(`^${name}$`, 'i') } 
       });
@@ -48,6 +54,7 @@ class shoeController {
         releaseYear: releaseYear || new Date().getFullYear(),
         description: description || '',
         price,
+        category,
         stock: stock || 0,
         brand: brand || 'Unknown',
         size: size || [],
@@ -77,12 +84,12 @@ class shoeController {
     try {
       await connectDB();
 
-      // Pagination
+    
       const page = parseInt(req.query?.page) || 1;
       const limit = parseInt(req.query?.limit) || 10;
       const skip = (page - 1) * limit;
 
-      // Filtering
+      
       const filter = {};
       
       if (req.query?.brand) filter.brand = req.query.brand;
@@ -101,7 +108,7 @@ class shoeController {
         ];
       }
 
-      // Sorting
+    
       const sortBy = req.query?.sortBy || 'createdAt';
       const order = req.query?.order === 'asc' ? 1 : -1;
 
@@ -176,7 +183,7 @@ class shoeController {
       await connectDB();
 
       const { id } = await req.params;
-      const { name, releaseYear, description, price, stock, brand, size, color, images } = req.body;
+      const { name, releaseYear, description, price, category,stock, brand, size, color, images } = req.body;
 
       if (!id) {
         return res.status(400).json({
@@ -185,7 +192,7 @@ class shoeController {
         });
       }
 
-      // Check if shoe exists
+     
       const existingShoe = await Shoes.findById(id);
       if (!existingShoe) {
         return res.status(404).json({
@@ -194,7 +201,7 @@ class shoeController {
         });
       }
 
-      // Check for name conflict if updating name
+   
       if (name && name !== existingShoe.name) {
         const nameConflict = await Shoes.findOne({
           _id: { $ne: id },
@@ -209,7 +216,7 @@ class shoeController {
         }
       }
 
-      // Validate price and stock
+  
       if (price !== undefined && price < 0) {
         return res.status(400).json({
           success: false,
@@ -224,12 +231,13 @@ class shoeController {
         });
       }
 
-      // Build update object (only include provided fields)
+     
       const updateData = {};
       if (name !== undefined) updateData.name = name;
       if (releaseYear !== undefined) updateData.releaseYear = releaseYear;
       if (description !== undefined) updateData.description = description;
       if (price !== undefined) updateData.price = price;
+      if (category !== undefined) updateData.category = category;
       if (stock !== undefined) updateData.stock = stock;
       if (brand !== undefined) updateData.brand = brand;
       if (size !== undefined) updateData.size = size;
@@ -306,7 +314,7 @@ class shoeController {
       await connectDB();
 
       const { id } = await req.params;
-      const { quantity } = req.body; // Can be positive (restock) or negative (purchase)
+      const { quantity } = req.body;
 
       if (!id || quantity === undefined) {
         return res.status(400).json({

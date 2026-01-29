@@ -31,7 +31,8 @@ export async function GET(request){
 
 export async function POST(request) {
   try {
-const authUser = await adminOnly(request, mockRes)
+    const authUser = await adminOnly(request, mockRes)
+    
     if (!authUser.user) {
       const authMessage = await authUser.json()
       return createResponse(authMessage, authUser.status)

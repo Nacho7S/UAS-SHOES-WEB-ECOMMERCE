@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { connectDB } from "../libs/mongoDb";
 import Cart from "../models/cartModels";
 import Shoes from "../models/shoeModel";
@@ -12,7 +13,7 @@ class cartController {
       const userId = req.user?.id;
       const { shoeId, quantity = 1, size, color } = req.body;
 
-      // Validation
+    
       if (!userId) {
         return res.status(401).json({
           success: false,
@@ -34,7 +35,7 @@ class cartController {
         });
       }
 
-      // Check if shoe exists
+
       const shoe = await Shoes.findById(shoeId);
       if (!shoe) {
         return res.status(404).json({
@@ -43,7 +44,7 @@ class cartController {
         });
       }
 
-      // Check stock availability
+     
       if (shoe.stock < quantity) {
         return res.status(400).json({
           success: false,
@@ -51,25 +52,25 @@ class cartController {
         });
       }
 
-      // Find or create cart
+    
       let cart = await Cart.findOne({ userId });
 
       if (!cart) {
-        // Create new cart
+      
         cart = new Cart({
           userId,
           items: []
         });
       }
 
-      // Check if item already exists (same shoe, size, color)
+     
       const existingItem = cart.hasItem(shoeId, size, color);
 
       if (existingItem) {
-        // Update quantity
+       
         const newQuantity = existingItem.quantity + quantity;
         
-        // Check if new quantity exceeds stock
+       
         if (shoe.stock < newQuantity) {
           return res.status(400).json({
             success: false,
@@ -79,7 +80,7 @@ class cartController {
 
         existingItem.quantity = newQuantity;
       } else {
-        // Add new item
+      
         cart.items.push({
           shoeId,
           quantity,
@@ -91,7 +92,7 @@ class cartController {
 
       await cart.save();
 
-      // Populate shoe details for response
+    
       await cart.populate({
         path: 'items.shoeId',
         select: 'name brand images price'
@@ -119,75 +120,100 @@ class cartController {
   }
 
   static async getCart(req, res, next) {
-    try {
-      await connectDB();
-
-      const userId = req.user?.id; 
-      
-      if (!userId) {
-        return res.status(401).json({
-          success: false,
-          message: 'User not authenticated'
-        });
-      }
-
-      const cart = await Cart.findOne({ userId })
-        .populate({
-          path: 'items.shoeId',
-          select: 'name brand images price' // Select only needed fields
-        })
-        .lean();     
-
-      if (!cart) {
-        // Return empty cart structure if none exists
-        return res.status(200).json({
-          success: true,
-          message: 'Cart is empty',
-          data: {
-            items: [],
-            totals: {
-              subtotal: 0,
-              discount: 0,
-              total: 0,
-              itemCount: 0
-            }
-          }
-        });
-      }
-
-
-      cart.calculateTotals = function() {
-  return {
-    subtotal: this.items.reduce((sum, item) => sum + (item.priceAtAdd * item.quantity), 0),
-    discount: this.discountAmount || 0,
-    total: Math.max(0, this.items.reduce((sum, item) => sum + (item.priceAtAdd * item.quantity), 0) - (this.discountAmount || 0)),
-    itemCount: this.items.reduce((sum, item) => sum + item.quantity, 0)
-  };
-};
-
-      const totals = cart.calculateTotals();
-
-      console.log(totals);
-      
-
-      res.status(200).json({
-        success: true,
-        message: 'Cart retrieved successfully',
-        data: {
-          ...cart,
-          totals
-        }
-      });
-
-    } catch (error) {
-      console.error('Get cart error:', error);
-      res.status(500).json({
+  try {
+    await connectDB();
+    const userId = req.user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({
         success: false,
-        message: 'Error fetching cart',
-        error: error.message
+        message: 'User not authenticated'
       });
     }
+
+  
+    const cartAggregation = await Cart.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      {
+        $lookup: {
+          from: 'shoes',
+          localField: 'items.shoeId',
+          foreignField: '_id',
+          as: 'shoeData'
+        }
+      }
+    ]);
+
+    let cart = await Cart.findOne({ userId })
+      .populate({
+        path: 'items.shoeId',
+        select: 'name brand images price stock'
+      })
+      .lean();
+
+    if (!cart) {
+      return res.status(200).json({
+        success: true,
+        message: 'Cart is empty',
+        data: {
+          items: [],
+          totals: {
+            subtotal: 0,
+            discount: 0,
+            total: 0,
+            itemCount: 0
+          }
+        }
+      });
+    }
+
+
+    const originalLength = cart.items.length;
+    const validItems = cart.items.filter(item => item.shoeId !== null);
+    const removedCount = originalLength - validItems.length;
+
+
+    if (removedCount > 0) {
+      const orphanedItemIds = cart.items
+        .filter(item => item.shoeId === null)
+        .map(item => item._id.toString());
+
+  
+      await Cart.updateOne(
+        { userId },
+        { $pull: { items: { _id: { $in: orphanedItemIds.map(id => new mongoose.Types.ObjectId(id)) } } } }
+      );
+
+      // console.log(`Removed ${removedCount} orphaned items from cart ${cart._id}`);
+    }
+
+
+    const totals = {
+      subtotal: validItems.reduce((sum, item) => sum + (item.priceAtAdd * item.quantity), 0),
+      discount: cart.discountAmount || 0,
+      total: Math.max(0, validItems.reduce((sum, item) => sum + (item.priceAtAdd * item.quantity), 0) - (cart.discountAmount || 0)),
+      itemCount: validItems.reduce((sum, item) => sum + item.quantity, 0)
+    };
+
+    res.status(200).json({
+      success: true,
+      message: removedCount > 0 ? `Cart cleaned up. Removed ${removedCount} unavailable items.` : 'Cart retrieved successfully',
+      data: {
+        ...cart,
+        items: validItems,
+        totals
+      }
+    });
+
+  } catch (error) {
+    console.error('Get cart error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching cart',
+      error: error.message
+    });
   }
+}
 
   static async updateQuantity(req, res, next) {
     try {
@@ -226,7 +252,7 @@ class cartController {
         });
       }
 
-      // Find item in cart
+     
       const item = cart.items.id(itemId);
       
       if (!item) {
@@ -236,7 +262,7 @@ class cartController {
         });
       }
 
-      // Check stock availability
+     
       const shoe = await Shoes.findById(item.shoeId);
       if (shoe.stock < quantity) {
         return res.status(400).json({
@@ -248,7 +274,7 @@ class cartController {
       item.quantity = quantity;
       await cart.save();
 
-      // Populate for response
+      
       await cart.populate({
         path: 'items.shoeId',
         select: 'name brand images price'
@@ -280,7 +306,7 @@ class cartController {
       await connectDB();
 
       const userId = req.user?.id;
-      const { itemId } = req.params;
+      const { itemId } = await req.params;
 
       if (!userId) {
         return res.status(401).json({
@@ -305,11 +331,10 @@ class cartController {
         });
       }
 
-      // Remove item
+  
       cart.items.pull(itemId);
       await cart.save();
 
-      // If cart is empty, you might want to delete it
       if (cart.items.length === 0) {
         await Cart.findByIdAndDelete(cart._id);
         return res.status(200).json({
@@ -327,7 +352,7 @@ class cartController {
         });
       }
 
-      // Populate for response
+  
       await cart.populate({
         path: 'items.shoeId',
         select: 'name brand images price'

@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 const shoeData = [
-  // Nike Air Jordan Collection
+
   {
     name: 'Air Jordan 1 Retro High OG',
     brand: 'Jordan',
@@ -60,7 +60,7 @@ const shoeData = [
     ]
   },
 
-  // Nike Collection
+
   {
     name: 'Nike Air Force 1 \'07',
     brand: 'Nike',
@@ -140,7 +140,7 @@ const shoeData = [
     ]
   },
 
-  // Adidas Collection
+
   {
     name: 'Adidas Yeezy Boost 350 V2',
     brand: 'Adidas',
@@ -284,7 +284,7 @@ const seedShoes = async () => {
     let skipped = 0;
 
     for (const shoe of shoeData) {
-      // Check if shoe already exists
+
       const existing = await Shoes.findOne({ 
         name: { $regex: new RegExp(`^${shoe.name}$`, 'i') } 
       });
@@ -314,5 +314,5 @@ const seedShoes = async () => {
   }
 };
 
-// Run seed
+
 seedShoes();

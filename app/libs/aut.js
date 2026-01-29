@@ -31,9 +31,11 @@ export const authenticateUser = async (req, res) => {
     if (!cookieHeader) {
       return { authenticated: false, user: null,  status: 401, message: "unauthenticated"};
     }
+  
 
     const token = await extractToken(cookieHeader);
     const decoded = await verifyToken(token);
+    
       return { authenticated: true, user: { id: decoded.userId || decoded.id, role: decoded.role } };
     } catch (error) {
       console.error('Token verification error:', error);

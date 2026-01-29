@@ -59,6 +59,7 @@ class userController {
     const token = await generateToken({
       userId: newUser._id.toString(),
       username: newUser.username,
+      role: newUser.username
     });
 
     res.status(201).json({
@@ -69,6 +70,7 @@ class userController {
         id: newUser._id.toString(),
         username: newUser.username,
         email: newUser.email,
+        role: newUser.role
       }
     });
 
@@ -130,6 +132,7 @@ class userController {
         id: user._id.toString(),
         username: user.username,
         email: user.email,
+        role: user.role
       }
     });
     } catch (error) {
@@ -164,6 +167,7 @@ class userController {
           userId: user._id.toString(),
           username: user.username,
           email: user.email,
+          role: user.role
         }
       };
     } catch (verificationError) {
@@ -230,8 +234,8 @@ class userController {
 
       const { id } = await req.params || await req.body;
       const { username, email, role, password } = req.body;
-      const currentUserId = req.user?.userId; // From auth middleware
-      const currentUserRole = req.user?.role;
+      const currentUserId = req.user?.id; 
+      const currentUserRole = req.user?.role;      
 
       if (!id) {
         return res.status(400).json({
@@ -240,7 +244,7 @@ class userController {
         });
       }
 
-      // Find user to update
+    
       const user = await User.findById(id);
       if (!user) {
         return res.status(404).json({
@@ -249,7 +253,8 @@ class userController {
         });
       }
 
-      // Authorization check: only admin or own profile
+      
+
       if (currentUserRole !== 'admin' && currentUserId !== id) {
         return res.status(403).json({
           success: false,
@@ -257,15 +262,15 @@ class userController {
         });
       }
 
-      // Only admin can change role
-      if (role && currentUserRole !== 'admin') {
+     
+      if (role && user.role !== role && currentUserRole !== 'admin') {
         return res.status(403).json({
           success: false,
           message: 'Forbidden: Only admin can change user role'
         });
       }
 
-      // Prevent removing own admin status (safety check)
+     
       if (currentUserId === id && role && role !== 'admin' && user.role === 'admin') {
         const adminCount = await User.countDocuments({ role: 'admin' });
         if (adminCount <= 1) {
@@ -276,7 +281,7 @@ class userController {
         }
       }
 
-      // Check for duplicate username/email
+     
       if (username || email) {
         const duplicateCheck = await User.findOne({
           _id: { $ne: id },
@@ -294,7 +299,7 @@ class userController {
         }
       }
 
-      // Build update object
+  
       const updateData = {};
       if (username) updateData.username = username;
       if (email) updateData.email = email;
@@ -336,7 +341,7 @@ class userController {
       await connectDB();
 
       const { id } = await req.params || await req.body;
-      const currentUserId = req.user?.userId;
+      const currentUserId = req.user?.id;
       const currentUserRole = req.user?.role;
 
       if (!id) {
@@ -346,15 +351,7 @@ class userController {
         });
       }
 
-      // Only admin can delete users
-      if (currentUserRole !== 'admin') {
-        return res.status(403).json({
-          success: false,
-          message: 'Forbidden: Only admin can delete users'
-        });
-      }
-
-      // Prevent self-deletion
+   
       if (id === currentUserId) {
         return res.status(400).json({
           success: false,
@@ -370,7 +367,7 @@ class userController {
         });
       }
 
-      // Prevent deleting the last admin
+
       if (user.role === 'admin') {
         const adminCount = await User.countDocuments({ role: 'admin' });
         if (adminCount <= 1) {

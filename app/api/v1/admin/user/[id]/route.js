@@ -2,7 +2,7 @@ import userController from "../../../../../controllers/userController";
 import { createResponse } from "../../../../../helper/createResponse";
 import { mockReq, mockRes, responseData, responseStatus } from "../../../../../helper/moqReqRes";
 import { parseRequestBody } from "../../../../../helper/parseRequestBody";
-import { adminAndModOnly } from "../../middleware";
+import { adminAndModOnly, adminOnly } from "../../middleware";
 
 export async function GET(request, {params}) {
   try {
@@ -65,8 +65,12 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, {params}){
   try {
-const authUser = await adminAndModOnly(request, mockRes);
+    const authUser = await adminOnly(request, mockRes);
+    console.log(authUser);
+    
     if (!authUser.user) {
+      console.log("masuk error");
+      
           const authMessage = await authUser.json()
           return createResponse(authMessage, authUser.status)
     }

@@ -4,11 +4,12 @@ export const adminOnly = async (request, res) => {
   try {
     const auth = await authenticateUser(request);
     
+    
+    
 
     if (!auth.authenticated) {
       return res.status(auth.status).json({ success: false, message: auth.message });
     }
-  
     if (auth.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Forbidden' });
     } else {

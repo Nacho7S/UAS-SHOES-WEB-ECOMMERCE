@@ -6,7 +6,7 @@ import { adminAndModOnly, adminOnly } from "../../middleware";
 
 
 export async function PUT(request, { params }) {
-  const authUser = await adminAndModOnly(request);
+  const authUser = await adminAndModOnly(request, mockRes);
   if (!authUser.user) {
                 const authMessage = await authUser.json()
                 return createResponse(authMessage, authUser.status)
@@ -31,7 +31,9 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const authUser = await adminOnly(request);
+    const authUser = await adminOnly(request, mockRes);
+
+    
     if (!authUser.user) {
                 const authMessage = await authUser.json()
                 return createResponse(authMessage, authUser.status)
@@ -51,7 +53,7 @@ export async function DELETE(request, { params }) {
 }
 
 export async function PATCH(request, { params }) {
-  const authUser = await adminAndModOnly(request);
+  const authUser = await adminAndModOnly(request, mockRes);
   if (!authUser.user) {
                 const authMessage = await authUser.json()
                 return createResponse(authMessage, authUser.status)

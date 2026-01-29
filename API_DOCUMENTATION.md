@@ -84,6 +84,35 @@
   }
   ```
 
+  #### Update Current User (me)
+- **Endpoint**: `PUT /api/v1/user/me`
+- **Description**: Updates a user's information (user own profile)
+- **Headers**: `Authorization: Bearer <token>` or `Cookie: auth-token=<token>`
+- **Request Body**:
+  ```json
+  {
+    "username": "string",
+    "email": "string",
+    "password": "string (min 6 chars)"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": boolean,
+    "message": "string",
+    "data": {
+      "_id": "string",
+      "username": "string",
+      "email": "string",
+      "role": "string",
+      "lastLogin": "date string",
+      "createdAt": "date string",
+      "updatedAt": "date string"
+    }
+  }
+  ```
+
 ## Shoes
 
 ### Get All Shoes
@@ -176,6 +205,7 @@
     "description": "string",
     "stock": "number",
     "brand": "string",
+    "category": "string",
     "size": ["array"],
     "color": ["array"],
     "images": ["array"]
@@ -194,6 +224,7 @@
       "price": "number",
       "stock": "number",
       "brand": "string",
+      "category": "string",
       "size": ["array"],
       "color": ["array"],
       "images": ["array"],
@@ -222,6 +253,7 @@
       "price": "number",
       "stock": "number",
       "brand": "string",
+      "category": "string",
       "size": ["array"],
       "color": ["array"],
       "images": ["array"],
