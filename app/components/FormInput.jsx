@@ -433,17 +433,17 @@ export default function ShoeFormPage({ params }) {
                 {formData.images.length > 0 && (
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
                     {formData.images.map((img, index) => (
-                      <div key={index} className="relative group aspect-square rounded-lg overflow-hidden bg-gray-100">
+                      <div key={index} className="relative group aspect-4/3 rounded-lg overflow-hidden bg-gray-100">
                         <Image
                           src={img}
                           alt={`Product image ${index + 1}`}
                           fill
-                          className="object-cover"
+                          className="object-contain"
                         />
                         <button
                           type="button"
                           onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
