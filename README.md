@@ -2,6 +2,9 @@
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app). A full-featured shoe store application with user authentication, cart functionality, and admin capabilities.
 
+this website already deployed you can see on this Link:
+[shoe-store](https://uas-shoes-web-ecommerce.vercel.app/home)
+
 ## Features
 
 - **User Authentication**: Register, login, and logout functionality
@@ -13,6 +16,55 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ## API Documentation
 
 Complete API documentation is available in [API_DOCUMENTATION.md](./API_DOCUMENTATION.md).
+
+## Application Routes
+
+The application follows the Next.js App Router structure with the following pages:
+
+### Public Routes
+- `/home` - Main product browsing page with search, filtering, and sorting capabilities
+  ![Home Page](/public/images/home.png)
+- `/login` - User authentication page
+  ![Login Page](/public/images/login.png)
+- `/register` - User registration page
+  ![Register Page](/public/images/register.png)
+- `/shoe/[id]` - Individual shoe detail page with options to add to cart
+  ![Shoe Detail Page](/public/images/shoe⁄[id].png)
+
+### User Routes (Requires Authentication)
+- `/profile` - User profile management page
+  ![Profile Page](/public/images/profile.png)
+- `/cart` - Shopping cart page with item management
+  ![Cart Page](/public/images/cart.png)
+- `/checkout` - Checkout process page (currently under construction)
+
+- `/orders` - Order history page (currently under construction)
+  ![Orders Page](/public/images/cart.png)
+
+### Admin Routes (Requires Admin/Moderator Role)
+- `/admin` - Admin dashboard landing page
+  ![Admin Dashboard](/public/images/admin-dahsboard.png)
+- `/admin/shoe` - Shoe inventory management page
+  ![Shoe Dashboard](/public/images/shoe-dashboard.png)
+- `/admin/shoe/new` - Create new shoe form
+  ![Add Shoe Form](/public/images/add-shoe-form.png)
+- `/admin/shoe/[id]` - Edit existing shoe form
+  ![Edit Shoe Form](/public/images/edit-shoe-form.png)
+- `/admin/user` - User management page with CRUD operations
+  ![User Management](/public/images/user-dashboard.png)
+  ![Add User Form](/public/images/add-user.png)
+  ![Edit User Form](/public/images/edit-user.png)
+
+## Layout Structure
+
+The application uses a single root layout located at `app/layout.tsx` which provides:
+- Global metadata (title and description)
+- Shared providers (Auth and Cart)
+- Common UI elements (Navbar)
+- Global styles and fonts (Geist and Geist Mono)
+- Root HTML and body structure
+
+All pages inherit from this root layout, ensuring consistent styling and functionality across the application.
 
 ## Getting Started
 

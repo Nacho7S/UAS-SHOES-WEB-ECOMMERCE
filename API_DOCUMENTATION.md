@@ -84,7 +84,7 @@
   }
   ```
 
-  #### Update Current User (me)
+### Update Current User (me)
 - **Endpoint**: `PUT /api/v1/user/me`
 - **Description**: Updates a user's information (user own profile)
 - **Headers**: `Authorization: Bearer <token>` or `Cookie: auth-token=<token>`
