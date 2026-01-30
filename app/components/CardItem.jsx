@@ -14,12 +14,12 @@ export default function CardItem({ item }) {
       className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 cursor-pointer"
       onClick={() => router.push(`/shoe/${item._id}`)}      
     >
-      <div className="relative aspect-square bg-gray-100 overflow-hidden">
+      <div className="relative aspect-4/3 bg-gray-100 overflow-hidden">
         <Image 
           src={item.images?.[0] || '/placeholder-shoe.png'}
           alt={item.name || 'Shoe image'}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-contain group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
 
