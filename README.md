@@ -2,6 +2,9 @@
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app). A full-featured shoe store application with user authentication, cart functionality, and admin capabilities.
 
+this website already deployed you can see on this Link:
+[shoe-store](https://uas-shoes-web-ecommerce.vercel.app/home)
+
 ## Features
 
 - **User Authentication**: Register, login, and logout functionality
