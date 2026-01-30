@@ -14,6 +14,41 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 Complete API documentation is available in [API_DOCUMENTATION.md](./API_DOCUMENTATION.md).
 
+## Application Routes
+
+The application follows the Next.js App Router structure with the following pages:
+
+### Public Routes
+- `/` - Landing page with basic message
+- `/home` - Main product browsing page with search, filtering, and sorting capabilities
+- `/login` - User authentication page
+- `/register` - User registration page
+- `/shoe/[id]` - Individual shoe detail page with options to add to cart
+
+### User Routes (Requires Authentication)
+- `/profile` - User profile management page
+- `/cart` - Shopping cart page with item management
+- `/checkout` - Checkout process page (currently under construction)
+- `/orders` - Order history page (currently under construction)
+
+### Admin Routes (Requires Admin/Moderator Role)
+- `/admin` - Admin dashboard landing page
+- `/admin/shoe` - Shoe inventory management page
+- `/admin/shoe/new` - Create new shoe form
+- `/admin/shoe/[id]` - Edit existing shoe form
+- `/admin/user` - User management page with CRUD operations
+
+## Layout Structure
+
+The application uses a single root layout located at `app/layout.tsx` which provides:
+- Global metadata (title and description)
+- Shared providers (Auth and Cart)
+- Common UI elements (Navbar)
+- Global styles and fonts (Geist and Geist Mono)
+- Root HTML and body structure
+
+All pages inherit from this root layout, ensuring consistent styling and functionality across the application.
+
 ## Getting Started
 
 First, you'll need to set up your environment variables. Create a `.env.local` file in the root directory with the following required variables:

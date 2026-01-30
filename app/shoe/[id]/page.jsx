@@ -126,13 +126,13 @@ export default function ShoeDetailPage() {
      
           <div className="space-y-4">
  
-            <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden group">
+            <div className="relative aspect-4/3 bg-gray-100 rounded-2xl overflow-hidden group">
               {shoe.images?.[selectedImage] ? (
                 <Image
                   src={shoe.images[selectedImage]}
                   alt={shoe.name}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   priority
                 />
               ) : (
