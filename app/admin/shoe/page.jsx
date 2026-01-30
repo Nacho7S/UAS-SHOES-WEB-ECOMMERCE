@@ -398,7 +398,7 @@ export default function ShoeDashboard() {
                                 src={shoe.images[0]}
                                 alt={shoe.name}
                                 fill
-                                className="object-cover"
+                                className="object-contain"
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -482,7 +482,7 @@ export default function ShoeDashboard() {
                               setItemToDelete(shoe)
                               setShowDeleteModal(true)
                             }}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-red-600  hover:bg-red-50 rounded-lg transition-colors"
                             title="Delete"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
