@@ -190,7 +190,7 @@ export default function UserPage() {
 
       if (response.ok) {
         setShowCreateModal(false)
-        setFormData({ username: '', email: '', password: '', role: 'user' })
+        setFormData({ username: '', email: '', password: '', role: 'customer' })
         fetchUsers()
       } else {
         setFormErrors({ submit: data.message || 'Failed to create user' })
@@ -223,7 +223,7 @@ export default function UserPage() {
       if (response.ok) {
         setShowEditModal(false)
         setUserToEdit(null)
-        setFormData({ username: '', email: '', password: '', role: 'user' })
+        setFormData({ username: '', email: '', password: '', role: 'customer' })
         fetchUsers()
       } else {
         setFormErrors({ submit: data.message || 'Failed to update user' })
@@ -291,7 +291,7 @@ export default function UserPage() {
               )}
               <button
                 onClick={() => {
-                  setFormData({ username: '', email: '', password: '', role: 'user' })
+                  setFormData({ username: '', email: '', password: '', role: 'customer' })
                   setFormErrors({})
                   setShowCreateModal(true)
                 }}

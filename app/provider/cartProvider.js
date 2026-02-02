@@ -62,6 +62,8 @@ export function CartProvider({ children }) {
     
     setIsLoading(true)
     try {
+  
+
       const res = await fetch('/api/v1/user/cart', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

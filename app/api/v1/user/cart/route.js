@@ -68,7 +68,7 @@ export async function PUT(request) {
       return createResponse(authMessage, authUser.status)
     };
 
-    const body = parseRequestBody(request);
+    const body = await parseRequestBody(request);
     const mockReqPut = mockReq({
       body,
       user: auth.user
