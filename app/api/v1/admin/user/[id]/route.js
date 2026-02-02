@@ -66,10 +66,10 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, {params}){
   try {
     const authUser = await adminOnly(request, mockRes);
-    console.log(authUser);
+
     
     if (!authUser.user) {
-      console.log("masuk error");
+   
       
           const authMessage = await authUser.json()
           return createResponse(authMessage, authUser.status)
